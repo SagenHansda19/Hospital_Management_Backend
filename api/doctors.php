@@ -17,8 +17,12 @@ try {
     
     // Validate sort parameter
     $allowed_sorts = ['name', 'experience', 'available'];
-    $sort = isset($_GET['sort']) && in_array($_GET['sort'], $allowed_sorts) ? 
-        $_GET['sort'] : 'name';
+    $sort = isset($_GET['sort']) ? $_GET['sort'] : 'experience';
+    $order = isset($_GET['order']) && strtoupper($_GET['order']) === 'ASC' ? 'ASC' : 'DESC';
+
+    if (!in_array($sort, $allowed_sorts)) {
+        $sort = 'experience';
+    }
 
     // Base query
     $query = "SELECT id, name, specialization, location, city, 
@@ -41,7 +45,7 @@ try {
     }
 
     // Add sorting
-    $query .= " ORDER BY $sort DESC";
+    $query .= " ORDER BY $sort $order, available DESC";
 
     // Execute query with ASSOC fetch mode to prevent duplicate fields
     $stmt = $conn->prepare($query);
